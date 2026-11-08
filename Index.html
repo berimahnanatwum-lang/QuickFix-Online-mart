@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Fix Online Mart | Online Grocery Shopping Ghana</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f7faf7;color:#243329}
+header{background:#126b39;color:white;padding:20px;text-align:center}
+header h1{margin:0;font-size:25px}
+header p{margin:7px 0}
+nav{background:#084c29;padding:13px;text-align:center}
+nav a{color:white;text-decoration:none;margin:0 12px}
+.hero{padding:48px 20px;text-align:center;background:#e1f3e5}
+.hero h2{font-size:30px;color:#126b39}
+.hero p{line-height:1.6}
+button{background:#168344;color:white;border:0;padding:12px 18px;border-radius:6px;cursor:pointer}
+main{max-width:1050px;margin:auto;padding:20px}
+h2.section{text-align:center;color:#126b39}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:15px}
+.product{background:white;border-radius:10px;padding:15px;text-align:center;box-shadow:0 2px 8px #0001}
+.product .emoji{font-size:42px}
+.product h3{font-size:17px}
+.price{font-weight:bold;color:#126b39}
+.product button{width:100%}
+.cart{background:white;padding:20px;border-radius:10px;margin-top:30px}
+.cart-item{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #ddd}
+input{padding:12px;width:100%;margin:7px 0;border:1px solid #ccc;border-radius:6px}
+footer{background:#084c29;color:white;text-align:center;padding:25px;margin-top:35px}
+</style>
+</head>
+<body>
+<header>
+<h1>QUICK FIX ONLINE MART</h1>
+<p>Your Trusted Online Grocery Store</p>
+<p>Fresh Foodstuff | Affordable Prices | Convenient Delivery</p>
+</header>
+<nav>
+<a href="#home">Home</a>
+<a href="#shop">Shop</a>
+<a href="#cart">My Cart</a>
+</nav>
+<section class="hero" id="home">
+<h2>Shop Groceries From Home!</h2>
+<p>Get your everyday foodstuff and groceries delivered to your doorstep across Greater Accra.</p>
+<a href="#shop"><button>Start Shopping</button></a>
+</section>
+<main>
+<h2 class="section" id="shop">Our Grocery Products</h2>
+<p style="text-align:center">Choose your favourite groceries and add them to your cart.</p>
+<div class="products" id="products"></div>
+<section class="cart" id="cart">
+<h2>🛒 Your Shopping Cart</h2>
+<div id="cartItems">Your cart is empty.</div>
+<h3 id="total">Total: GH₵0.00</h3>
+<h3>Delivery Details</h3>
+<input id="customer" placeholder="Your full name">
+<input id="phone" placeholder="Your phone number">
+<input id="location" placeholder="Your delivery location">
+<input id="instructions" placeholder="Delivery instructions (optional)">
+<p>Payment: Confirm payment arrangements when ordering. Cash on delivery can be requested.</p>
+<button onclick="checkout()">Order via WhatsApp</button>
+</section>
+</main>
+<footer>
+<h3>QUICK FIX ONLINE MART</h3>
+<p>Greater Accra, Ghana</p>
+<p>WhatsApp: 0593866564</p>
+<p>© 2026 Quick Fix Online Mart. All rights reserved.</p>
+</footer>
+<script>
+const products=[
+{name:"Rice",price:100,emoji:"🍚"},
+{name:"Beans",price:35,emoji:"🫘"},
+{name:"Maize",price:30,emoji:"🌽"},
+{name:"Cooking Oil",price:55,emoji:"🫗"},
+{name:"Tomatoes",price:25,emoji:"🍅"},
+{name:"Onions",price:20,emoji:"🧅"},
+{name:"Fresh Pepper",price:15,emoji:"🌶️"},
+{name:"Plantain",price:30,emoji:"🍌"},
+{name:"Fish",price:60,emoji:"🐟"},
+{name:"Eggs",price:45,emoji:"🥚"},
+{name:"Sugar",price:35,emoji:"🧂"},
+{name:"Milk",price:30,emoji:"🥛"}
+];
+let cart=[];
+const money=n=>"GH₵"+n.toFixed(2);
+function showProducts(){
+document.getElementById("products").innerHTML=products.map((p,i)=>`
+<div class="product">
+<div class="emoji">${p.emoji}</div>
+<h3>${p.name}</h3>
+<p class="price">${money(p.price)}</p>
+<button onclick="add(${i})">Add to Cart</button>
+</div>`).join("");
+}
+function add(i){cart.push(products[i]);showCart();}
+function showCart(){
+let counts={};
+cart.forEach(p=>counts[p.name]=(counts[p.name]||0)+1);
+document.getElementById("cartItems").innerHTML=cart.length?
+Object.entries(counts).map(([name,q])=>{
+let p=products.find(x=>x.name===name);
+return `<div class="cart-item"><span>${name} × ${q}</span><span>${money(p.price*q)}</span></div>`;
+}).join(""):"Your cart is empty.";
+document.getElementById("total").textContent="Total: "+money(cart.reduce((s,p)=>s+p.price,0));
+}
+function checkout(){
+if(!cart.length){alert("Please add products to your cart.");return;}
+let name=document.getElementById("customer").value.trim();
+let phone=document.getElementById("phone").value.trim();
+let location=document.getElementById("location").value.trim();
+if(!name||!phone||!location){alert("Please enter your name, phone number and delivery location.");return;}
+let summary={};
+cart.forEach(p=>summary[p.name]=(summary[p.name]||0)+1);
+let order=Object.entries(summary).map(([n,q])=>{
+let p=products.find(x=>x.name===n);
+return `${n} x ${q} = ${money(p.price*q)}`;
+}).join("\n");
+let total=cart.reduce((s,p)=>s+p.price,0);
+let msg=`NEW GROCERY ORDER - QUICK FIX ONLINE MART\n\nCustomer: ${name}\nPhone: ${phone}\nDelivery location: ${location}\nInstructions: ${document.getElementById("instructions").value}\n\nORDER:\n${order}\n\nTotal: ${money(total)}\n\nPlease confirm availability and delivery fee.`;
+window.open("https://wa.me/233593866564?text="+encodeURIComponent(msg),"_blank");
+}
+showProducts();
+showCart();
+</script>
+</body>
+</html>
